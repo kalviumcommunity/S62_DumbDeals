@@ -1,0 +1,11 @@
+{
+  "name": "s62_dumbdeals",
+  "version": "1.0.0",
+  "description": "DumbDeals is a gamified e-commerce platform that redefines online shopping with humor and creativity. Instead of using real money, users can purchase absurd and useless products using a virtual wallet. The platform's purpose is to provide an engaging, lighthearted experience while serving as a learning sandbox for full-stack development. Users can create an account to set up their profile and wallet, read the product catalog, check their wallet balance. They can also update their profile details and spend wallet credits on purchases. If they choose, users can even delete their account to remove all their data.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
