@@ -21,3 +21,7 @@ DumbDeals is a gamified e-commerce platform that redefines online shopping with 
 **Backend**: Node.js, Express.js.
 
 **Database**: MongoDB
+
+
+### **Render Deployment Link**
+https://s62-dumbdeals.onrender.com/ping
