@@ -2,17 +2,16 @@ if(process.env.NODE_ENV !=='PRODUCTION'){
     require('dotenv').config();
 }
 const express = require('express');
-// const app = express();
-// const port = 3000;
-const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 const connectDatabase = require('./DB/database.js');
-
-dotenv.config({ path: './.env' });
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-
+app.get('/',(req,res)=>{
+    const dbStatus = mongoose.connection.readyState===1?'Connected':'Not connected';
+    res.send(`<h3>Database Connection Status : ${dbStatus}</h3>`);
+})
 app.get('/ping',(request,response)=>{
     response.send('Hello World!');
 });
