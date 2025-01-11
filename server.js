@@ -5,7 +5,8 @@ const express = require('express');
 const {getDB,connection} = require('./DB/mongo-client.js');
 
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(express.json());
+const port = process.env.PORT || 8080;
 
 app.get('/', async (req, res) => {
     const checkStatus = await connection.connect();
@@ -15,6 +16,8 @@ app.get('/', async (req, res) => {
     res.send(`<h3>Database Connection Status : ${readyState}</h3>`);
 });
 
+app.use('/user-router', require('./routes/users.route.js'));
+
 app.listen(port,()=>{
-    console.log(`Your server is running on http://localhost:${port}`);
+    console.log(`Your server is running on port ${port},  http://localhost:${port}`);
 });
