@@ -1,0 +1,21 @@
+meta {
+  name: CREATE USER DATA
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/user-router
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "silentOwl",
+    "email": "silent.owl@example.com",
+    "passwordHash": "hashed_password_88",
+    "createdAt": "2024-10-05T12:00:00Z",
+    "updatedAt": "2024-10-18T15:30:00Z"
+  }
+}
