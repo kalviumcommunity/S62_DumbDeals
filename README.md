@@ -25,3 +25,8 @@ DumbDeals is a gamified e-commerce platform that redefines online shopping with 
 
 ### **Render Deployment Link**
 https://s62-dumbdeals.onrender.com/ping
+
+
+
+####  **Deployed link of Frontend**
+https://s62-dumbdeals.pages.dev/
