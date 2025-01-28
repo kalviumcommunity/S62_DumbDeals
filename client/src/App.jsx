@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import LandingPage from './Pages/LandingPage';
 import ProductsPage from './Components/Products/ProductPage';
+import UsersPage from './Components/Users/UsersPage';
 
 const App = () => {
   return (
@@ -22,6 +23,11 @@ const App = () => {
                     Products
                   </Link>
                 </li>
+                <li>
+                  <Link to="/users" className="hover:underline">
+                    Users
+                  </Link>
+                </li>
               </ul>
             </nav>
           </div>
@@ -31,6 +37,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/users" element={<UsersPage/>}/>
         </Routes>
       </div>
     </Router>
