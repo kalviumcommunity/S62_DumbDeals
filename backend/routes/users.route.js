@@ -10,16 +10,20 @@ const {ObjectId} = require('mongodb');
 const port = process.env.PORT;
 
 // CREATE
-app.post('/',async(req,res)=>{
-    try{
+app.post('/', async (req, res) => {
+    try {
         const db = await getDB();
-        const insertUserData = await db.insertOne({...req.body});
-        return res.status(201).json({message:"User data inserted successfully", data:insertUserData});
+        const userData = {
+            ...req.body,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+        const insertUserData = await db.insertOne(userData);
+        return res.status(201).json({ message: "User signed up successfully", data: insertUserData });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
-    catch(error){
-        return res.status(500).json({message:error.message});
-    }
-})
+});
 // READ
 app.get('/users',async(req,res)=>{
     try{
