@@ -36,31 +36,46 @@ app.get('/users',async(req,res)=>{
     }
 });
 
-//UPDATE
-app.put('/:id', async (req,res)=>{
-    try{
+// UPDATE - Modify existing user data
+app.put('/:id', async (req, res) => {
+    try {
         const db = await getDB();
-        const {id} = req.params;
-        const updateUserData = await db.updateOne({_id: new ObjectId(id)},{$set:{...req.body}});
-        return res.status(200).json({message:"User data updated successfully", data:updateUserData});
-    }
-    catch(error){
-        return res.status(500).json({message:error.message});
-    }   
-})
+        const { id } = req.params;
+        const updatedUser = {
+            ...req.body,
+            updatedAt: new Date()
+        };
+        const updateUserData = await db.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: updatedUser }
+        );
 
-//DELETE
-app.delete('/:id', async(req,res)=>{
-    try{
+        if (updateUserData.matchedCount === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(200).json({ message: "User updated successfully", data: updateUserData });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+});
+
+// DELETE - Remove a user
+app.delete('/:id', async (req, res) => {
+    try {
         const db = await getDB();
-        const {id} = req.params;
-        const deleteUserData = await db.deleteOne({_id: new ObjectId(id)});
-        return res.status(200).json({message:"User data deleted successfully", data:deleteUserData});
+        const { id } = req.params;
+        const deleteUserData = await db.deleteOne({ _id: new ObjectId(id) });
+
+        if (deleteUserData.deletedCount === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(200).json({ message: "User deleted successfully", data: deleteUserData });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
-    catch(error){
-        return res.status(500).json({message:error.message});
-    }
-})
+});
 
 module.exports = app;
 
