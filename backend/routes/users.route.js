@@ -2,6 +2,7 @@ if(process.env.NODE_ENV !=='PRODUCTION'){
     require('dotenv').config();
 }
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const {getDB,connection} = require('../DB/mongo-client.js');
 const app = express.Router();
 
@@ -13,17 +14,25 @@ const port = process.env.PORT;
 app.post('/', async (req, res) => {
     try {
         const db = await getDB();
+        const { password, ...otherUserData } = req.body;
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         const userData = {
-            ...req.body,
+            ...otherUserData,
+            password: hashedPassword,
             createdAt: new Date(),
             updatedAt: new Date()
         };
+
         const insertUserData = await db.insertOne(userData);
         return res.status(201).json({ message: "User signed up successfully", data: insertUserData });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 });
+
 // READ
 app.get('/users',async(req,res)=>{
     try{
@@ -41,13 +50,18 @@ app.put('/:id', async (req, res) => {
     try {
         const db = await getDB();
         const { id } = req.params;
-        const updatedUser = {
-            ...req.body,
-            updatedAt: new Date()
-        };
+        const { password, ...otherUpdates } = req.body;
+
+        // Hash new password if provided
+        if (password) {
+            otherUpdates.password = await bcrypt.hash(password, 10);
+        }
+
+        otherUpdates.updatedAt = new Date();
+
         const updateUserData = await db.updateOne(
             { _id: new ObjectId(id) },
-            { $set: updatedUser }
+            { $set: otherUpdates }
         );
 
         if (updateUserData.matchedCount === 0) {
