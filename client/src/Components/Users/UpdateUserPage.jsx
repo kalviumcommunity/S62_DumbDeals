@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import ValidationForm from "../../Validation"; 
 
 const UpdateUserPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({ username: "", email: "", password: "" });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    fetch(`http://localhost:8080/user-router/users`)
+    fetch(`http://localhost:8080/user-router/`)
       .then((response) => response.json())
       .then((data) => {
         const user = data.data.find((user) => user._id === id);
-        if (user) setUserData({ username: user.username, email: user.email });
+        if (user) {
+          setUserData({ username: user.username, email: user.email, password: "" });
+        }
       })
       .catch((error) => console.error("Error fetching user:", error));
   }, [id]);
@@ -22,13 +26,33 @@ const UpdateUserPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
+
+    // **Validation**
+    const validationErrors = {};
+    const nameError = ValidationForm.validateName(userData.username);
+    const emailError = ValidationForm.validateEmail(userData.email);
+    const passwordError = userData.password ? ValidationForm.validatePass(userData.password) : true;
+
+    if (nameError !== true) validationErrors.username = nameError;
+    if (emailError !== true) validationErrors.email = emailError;
+    if (passwordError !== true) validationErrors.password = passwordError;
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     try {
+      const updatedData = { username: userData.username, email: userData.email };
+      if (userData.password) updatedData.password = userData.password; 
+
       await fetch(`http://localhost:8080/user-router/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(updatedData),
       });
-      setUserData({ username: "", email: "", password: "" });
+
       navigate("/users");
     } catch (error) {
       console.error("Error updating user:", error);
@@ -52,6 +76,7 @@ const UpdateUserPage = () => {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="Enter new username"
             />
+            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
           </div>
 
           {/* Email Field */}
@@ -66,6 +91,7 @@ const UpdateUserPage = () => {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="Enter new email"
             />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
 
           {/* Password Field */}
@@ -79,6 +105,7 @@ const UpdateUserPage = () => {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="Enter new password (optional)"
             />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
 
           {/* Submit Button */}
