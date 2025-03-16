@@ -26,10 +26,29 @@ app.post('/', async (req, res) => {
             updatedAt: new Date()
         };
 
-        const insertUserData = await db.insertOne(userData);
+        const insertUserData = await db.collection('Users').insertOne(userData);
         return res.status(201).json({ message: "User signed up successfully", data: insertUserData });
     } catch (error) {
         return res.status(500).json({ message: error.message });
+    }
+});
+
+app.post('/login', async (req, res) => {
+    try {
+      const db = await getDB();
+      const { email, password } = req.body;
+  
+      // Fetch the user by email
+      const user = await db.collection('Users').findOne({ email });
+      if (!user) return res.status(404).json({ message: "User not found" });
+  
+      // Compare the hashed password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+  
+      return res.status(200).json({ message: "Login successful", user });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
 });
 
@@ -37,7 +56,7 @@ app.post('/', async (req, res) => {
 app.get('/users',async(req,res)=>{
     try{
         const db = await getDB();
-        const readUserData = await db.find().toArray();
+        const readUserData = await db.collection('Users').find().toArray();
         return res.status(200).json({message:"User data fetched successfully", data:readUserData});
     }
     catch(error){
@@ -59,7 +78,7 @@ app.put('/:id', async (req, res) => {
 
         otherUpdates.updatedAt = new Date();
 
-        const updateUserData = await db.updateOne(
+        const updateUserData = await db.collection('Users').updateOne(
             { _id: new ObjectId(id) },
             { $set: otherUpdates }
         );
@@ -79,7 +98,7 @@ app.delete('/:id', async (req, res) => {
     try {
         const db = await getDB();
         const { id } = req.params;
-        const deleteUserData = await db.deleteOne({ _id: new ObjectId(id) });
+        const deleteUserData = await db.collection('Users').deleteOne({ _id: new ObjectId(id) });
 
         if (deleteUserData.deletedCount === 0) {
             return res.status(404).json({ message: "User not found" });
@@ -92,7 +111,3 @@ app.delete('/:id', async (req, res) => {
 });
 
 module.exports = app;
-
-
-
-

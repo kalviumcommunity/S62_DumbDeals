@@ -43,10 +43,23 @@ const LandingPage = () => {
       <section className="bg-white text-black py-12">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold text-black">Ready to Start Shopping?</h2>
+          {/* <p className="mt-4 text-lg">Create an account today and dive into the most absurd shopping experience ever!</p> */}
+
+          {/* Flex container for Sign Up and Login buttons */}
+          <div className="mt-6 flex justify-center items-center space-x-4">
           <p className="mt-4 text-lg">Create an account today and dive into the most absurd shopping experience ever!</p>
-          <a href="/signup" className="mt-6 inline-block bg-black text-white py-3 px-6 rounded-lg text-xl hover:bg-gray-800 transition-all duration-300">
-          Sign Up Now
-          </a>
+            <a href="/signup" className="bg-black text-white py-3 px-6 rounded-lg text-xl hover:bg-gray-800 transition-all duration-300">
+              Sign Up
+            </a>
+          </div>
+
+          {/* New Login Section */}
+          <div className="mt-4 text-lg flex justify-center items-center">
+            <p className="mr-2">Already have an account?</p>
+            <a href="/login" className="inline-block bg-black text-white py-3 px-6 rounded-lg text-xl hover:bg-gray-800 transition-all duration-300">
+              Login
+            </a>
+          </div>
         </div>
       </section>
 

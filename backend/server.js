@@ -19,7 +19,9 @@ app.get('/', async (req, res) => {
 });
 
 app.use('/user-router', require('./routes/users.route.js'));
+app.use("/product-router", require("./routes/product.route.js"));
+
 
 app.listen(port,()=>{
-    console.log(`Your server is running on port ${port},  http://localhost:${port}`);
+    console.log(`Your server is running on port ${port}, http://localhost:${port}`);
 });

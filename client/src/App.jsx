@@ -3,7 +3,9 @@ import LandingPage from './Pages/LandingPage';
 import ProductsPage from './Components/Products/ProductPage';
 import UsersPage from './Components/Users/UsersPage';
 import SignupPage from './Components/Authentication/Signup';
+import LoginPage from './Components/Authentication/Login';
 import UpdateUserPage from './Components/Users/UpdateUserPage';
+import AddProductsPage from './Components/Products/AddProducts';
 
 const App = () => {
   return (
@@ -30,6 +32,11 @@ const App = () => {
                     Users
                   </Link>
                 </li>
+                <li>
+                  <Link to="/add-product" className="hover:underline">
+                    Add Product
+                  </Link>
+                </li>
               </ul>
             </nav>
           </div>
@@ -42,6 +49,8 @@ const App = () => {
           <Route path="/users" element={<UsersPage/>}/>
           <Route path="/update-user/:id" element={<UpdateUserPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} /> {/* Add Login Page Route */}
+          <Route path="/add-product" element={<AddProductsPage/>}/>
         </Routes>
       </div>
     </Router>
