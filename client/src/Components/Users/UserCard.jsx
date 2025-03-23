@@ -1,3 +1,4 @@
+
 /* eslint-disable react/prop-types */
 const UserCard = ({ user, rank, onDelete, onUpdate }) => {
   return (
@@ -7,7 +8,7 @@ const UserCard = ({ user, rank, onDelete, onUpdate }) => {
           <span className="bg-black text-white text-lg font-bold rounded-full h-10 w-10 flex items-center justify-center">
             #{rank}
           </span>
-          <h2 className="text-xl font-semibold text-black">{user.name}</h2> 
+          <h2 className="text-xl font-semibold text-black">{user.username}</h2> 
         </div>
       </div>
       <p className="text-gray-700 text-base mb-2"> 
@@ -21,7 +22,7 @@ const UserCard = ({ user, rank, onDelete, onUpdate }) => {
           Edit
         </button>
         <button
-          onClick={() => onDelete(user.id)}
+          onClick={() => onDelete(user._id)}
           className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition"
         >
           Delete

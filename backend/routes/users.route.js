@@ -3,12 +3,16 @@ if(process.env.NODE_ENV !=='PRODUCTION'){
 }
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const cookieParser = require('cookie-parser');
 const {getDB,connection} = require('../DB/mongo-client.js');
 const app = express.Router();
 
 const {ObjectId} = require('mongodb');
 
 const port = process.env.PORT;
+
+// Add cookie parser middleware
+app.use(cookieParser());
 
 // CREATE
 app.post('/', async (req, res) => {
@@ -33,22 +37,47 @@ app.post('/', async (req, res) => {
     }
 });
 
+
+// LOGIN ENDPOINT - Set username in cookie
 app.post('/login', async (req, res) => {
     try {
-      const db = await getDB();
-      const { email, password } = req.body;
+        const db = await getDB();
+        const { email, password } = req.body;
   
-      // Fetch the user by email
-      const user = await db.collection('Users').findOne({ email });
-      if (!user) return res.status(404).json({ message: "User not found" });
+        // Fetch the user by email
+        const user = await db.collection('Users').findOne({ email });
+        if (!user) return res.status(404).json({ message: "User not found" });
   
-      // Compare the hashed password
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+        // Compare the hashed password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+        
+        // Set username in cookie - httpOnly for security
+        res.cookie('username', user.username || user.email, { 
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            sameSite: 'strict'
+        });
   
-      return res.status(200).json({ message: "Login successful", user });
+        // Exclude password from response
+        const { password: userPassword, ...userWithoutPassword } = user;
+        return res.status(200).json({ 
+            message: "Login successful", 
+            user: userWithoutPassword 
+        });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
+    }
+});
+
+// LOGOUT ENDPOINT - Clear cookie
+app.post('/logout', (req, res) => {
+    try {
+        // Clear the username cookie
+        res.clearCookie('username');
+        return res.status(200).json({ message: "Logout successful" });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
 });
 
