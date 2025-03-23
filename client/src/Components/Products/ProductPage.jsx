@@ -14,7 +14,7 @@ const ProductsPage = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch("http://localhost:8080/user-router/users");
+            const response = await fetch("http://localhost:8080/user-router");
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             const data = await response.json();
             setUsers(data?.data || []);
@@ -36,9 +36,16 @@ const ProductsPage = () => {
             setProducts(data?.data || []);
         } catch (error) {
             console.error("Error fetching products:", error);
+            setProducts([]);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleUserChange = (e) => {
+        const userId = e.target.value;
+        setSelectedUser(userId);
+        fetchProducts(userId);
     };
 
     return (
@@ -52,17 +59,14 @@ const ProductsPage = () => {
                 <div className="text-center mb-6">
                     <label className="text-lg font-semibold">Filter by User:</label>
                     <select
-                        onChange={(e) => {
-                            setSelectedUser(e.target.value);
-                            fetchProducts(e.target.value);
-                        }}
+                        onChange={handleUserChange}
                         value={selectedUser}
                         className="ml-4 p-2 border border-gray-300 rounded-lg"
                     >
                         <option value="">All Users</option>
                         {users?.map((user) => (
-                            <option key={user._id} value={user._id}>
-                                {user.username}
+                            <option key={user.id} value={user.id}>
+                                {user.name}
                             </option>
                         ))}
                     </select>
@@ -75,8 +79,8 @@ const ProductsPage = () => {
                 ) : (
                     <div className="products-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {products.length > 0 ? (
-                            products.map((product, index) => (
-                                <ProductCard key={index} product={product} />
+                            products.map((product) => (
+                                <ProductCard key={product.id} product={product} />
                             ))
                         ) : (
                             <p className="text-black text-center col-span-full text-xl font-medium py-8">
