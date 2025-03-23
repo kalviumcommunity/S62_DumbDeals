@@ -32,11 +32,7 @@ const AddProductsPage = () => {
         body: JSON.stringify({ ...formData, created_by: userId }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add product. Try again.");
-      }
-      
+      if (!response.ok) throw new Error("Failed to add product. Try again.");
       navigate("/products"); // Redirect to product page after adding
     } catch (err) {
       setError(err.message);
@@ -58,7 +54,6 @@ const AddProductsPage = () => {
                 value={formData[field]}
                 onChange={handleChange}
                 required
-                step={field === "price" ? "0.01" : undefined}
                 className="w-full p-3 border border-gray-300 rounded-lg"
                 placeholder={`Enter ${field}`}
               />

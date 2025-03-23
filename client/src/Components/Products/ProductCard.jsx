@@ -1,3 +1,4 @@
+
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 
@@ -13,22 +14,21 @@ const ProductCard = ({ product }) => {
 
   const fetchCreatorName = async (creatorId) => {
     try {
-      // Fetch single user by ID
-      const response = await fetch(`http://localhost:8080/user-router/${creatorId}`);
-      if (!response.ok) {
-        // Fallback to fetching all users if the direct fetch fails
-        const allUsersResponse = await fetch("http://localhost:8080/user-router");
-        const allUsersData = await allUsersResponse.json();
-        const creator = allUsersData.data.find(user => user.id === creatorId);
-        if (creator) {
-          setCreatorName(creator.name);
-        }
-        return;
-      }
+      // Get the creator ID in string format
+      const creatorIdStr = typeof creatorId === 'object' ? creatorId.toString() : creatorId;
+      
+      // Fetch all users
+      const response = await fetch("http://localhost:8080/user-router/users");
+      if (!response.ok) throw new Error("Failed to fetch users");
       
       const data = await response.json();
-      if (data.data && data.data.name) {
-        setCreatorName(data.data.name);
+      
+      // Find the user with the matching ID
+      const creator = data.data.find(user => user._id === creatorIdStr);
+      
+      // Set the creator name if found
+      if (creator) {
+        setCreatorName(creator.username);
       }
     } catch (error) {
       console.error("Error fetching creator name:", error);
@@ -38,7 +38,7 @@ const ProductCard = ({ product }) => {
   return (
     <div className="product-card bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
       <img
-        src={product.image || "https://via.placeholder.com/300x200?text=Image+Not+Available"}
+        src={product.image}
         alt={product.name}
         className="product-image w-full h-48 object-cover rounded-md mb-4"
         onError={(e) => {
@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
       />
       <h3 className="product-name text-xl font-bold text-black">{product.name}</h3>
       <p className="text-gray-500 text-sm">Created by: {creatorName}</p>
-      <p className="product-price text-gray-700 mt-2">Price: ${parseFloat(product.price).toFixed(2)}</p>
+      <p className="product-price text-gray-700 mt-2">Price: ${product.price}</p>
       <p className="product-points text-green-600 font-semibold mt-2">
         Earn {Math.floor(product.price / 2)} points!
       </p>
